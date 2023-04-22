@@ -47,11 +47,13 @@ u_n_2(1) = 0;
 u_n_2(end) = 0;
 
 %%
+
+h1 = figure('units','normalized','outerposition',[0 0 1 1]);
+
+filename = "Hadamard.gif";
+g_counter = 1;
 nt = 900000;
 %% MAIN LOOP
-   h1 = figure();
-   h2 = figure();
-
 for i = 1:nt
     Q = (3*mu+2*lambda)*d2UdX2(u_n_1);
     Q = Q + kappa*(dUdX(u_n_1).*d3UdX2dT(u_n_2,u_n_1) + d3UdX2dT(u_n_2,u_n_1) + d2UdX2(u_n_1).*d2UdXdT(u_n_2,u_n_1));
@@ -98,7 +100,17 @@ for i = 1:nt
         ylim([-10^8,10^8]);
         grid on;
         xlabel("x in m");
-        ylabel("Component of Poynting's Vector in Pa m/sec^2");
+        ylabel("Component of Poynting's Vector in Pa m/sec");
+        drawnow;
+        frame = getframe(1);
+        im = frame2im(frame);
+        [imind,cm] = rgb2ind(im,256);
+        if g_counter == 1
+          imwrite(imind,cm,filename,'gif', 'Loopcount',inf);
+          g_counter = 0;
+        else
+          imwrite(imind,cm,filename,'gif','WriteMode','append');
+        end
         pause(0.05);
         clf;
     end

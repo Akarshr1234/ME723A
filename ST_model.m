@@ -49,8 +49,10 @@ u_n_2(end) = 0;
 %%
 nt = 900000;
 %% MAIN LOOP
-   h1 = figure();
+   h1 = figure('units','normalized','outerposition',[0 0 1 1]);
 
+   filename = "ST_model.gif";
+   g_counter = 1;
 for i = 1:nt
     Q = (mu+lambda/2)*d2UdX2(u_n_1).*(6*dUdX(u_n_1) + 2 + 3*((dUdX(u_n_1)).^2));
     Q = Q + kappa*(dUdX(u_n_1).*d3UdX2dT(u_n_2,u_n_1) + d3UdX2dT(u_n_2,u_n_1) + d2UdX2(u_n_1).*d2UdXdT(u_n_2,u_n_1));
@@ -76,7 +78,7 @@ for i = 1:nt
     
     u_n_2 = u_n_1;
     u_n_1 = u_n;
- 
+    
     if mod(i,1000)==0
         subplot(2,1,1);
         plot(x,u_n);
@@ -94,7 +96,17 @@ for i = 1:nt
         ylim([-10^13,10^13]);
         grid on;
         xlabel("x in m");
-        ylabel("Component of Poynting's Vector in Pa m/sec^2");
+        ylabel("Component of Poynting's Vector in Pa m/sec");
+        drawnow;
+        frame = getframe(1);
+        im = frame2im(frame);
+        [imind,cm] = rgb2ind(im,256);
+        if g_counter == 1
+          imwrite(imind,cm,filename,'gif', 'Loopcount',inf);
+          g_counter = 0;
+        else
+          imwrite(imind,cm,filename,'gif','WriteMode','append');
+        end
         pause(0.05);
         clf;
     end
